@@ -1,0 +1,6 @@
+{
+  "name": "L'Ardoise Restaurant & Wine Bar",
+  "description": "Artisanal seasonal menu, chef pairings, and interactive table dining experience.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
