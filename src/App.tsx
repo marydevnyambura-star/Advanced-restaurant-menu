@@ -13,8 +13,9 @@ import { ManagerModal } from './components/ManagerModal';
 import { CombosSection } from './components/CombosSection';
 import { DrinksShowcaseSection } from './components/DrinksShowcaseSection';
 import { ScanToOrderModal } from './components/ScanToOrderModal';
+import { RecentOrdersModal } from './components/RecentOrdersModal';
 import { Footer } from './components/Footer';
-import { Utensils, Check, QrCode, Smartphone, GlassWater } from 'lucide-react';
+import { Utensils, Check, QrCode, Smartphone, Clock } from 'lucide-react';
 
 export default function App() {
   // Read initial table from URL query string if scanned from a phone QR code (e.g. ?table=Table+04)
@@ -60,6 +61,25 @@ export default function App() {
     }
   }, [cartItems]);
 
+  // Recent Orders (Last 5 orders) State with LocalStorage Persistence
+  const [recentOrders, setRecentOrders] = useState<PlacedOrder[]>(() => {
+    try {
+      const saved = localStorage.getItem('sizzle_recent_orders_v1');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.warn('Could not read cached recent orders:', e);
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('sizzle_recent_orders_v1', JSON.stringify(recentOrders));
+    } catch (e) {
+      console.warn('Could not persist recent orders:', e);
+    }
+  }, [recentOrders]);
+
   // Dining Details State
   const [diningDetails, setDiningDetails] = useState<DiningDetails>({
     serviceMode: 'dine-in',
@@ -81,6 +101,7 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isManagerOpen, setIsManagerOpen] = useState(false);
   const [isScanModalOpen, setIsScanModalOpen] = useState(false);
+  const [isRecentOrdersModalOpen, setIsRecentOrdersModalOpen] = useState(false);
   const [recentPlacedOrder, setRecentPlacedOrder] = useState<PlacedOrder | null>(null);
 
   // Transient Toast Notification
@@ -272,8 +293,28 @@ export default function App() {
     };
 
     setRecentPlacedOrder(placed);
+    // Persist to the last 5 device orders
+    setRecentOrders((prev) => [placed, ...prev].slice(0, 5));
     setCartItems([]);
     setIsCartOpen(false);
+  };
+
+  // Re-order past meals from history
+  const handleReorderItems = (items: CartItem[]) => {
+    const clonedItems = items.map((item) => ({
+      ...item,
+      cartItemId: `cart-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    }));
+    setCartItems((prev) => [...prev, ...clonedItems]);
+    setIsCartOpen(true);
+    showToast(`Re-added ${items.length} items to your order tray`);
+  };
+
+  // Clear device order history
+  const handleClearHistory = () => {
+    setRecentOrders([]);
+    localStorage.removeItem('sizzle_recent_orders_v1');
+    showToast('Device order history cleared');
   };
 
   // Manager Actions
@@ -316,9 +357,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#0f1217] text-[#f1ede4] flex flex-col font-sans">
-      {/* Top Banner: Scan to order notification strip */}
-      <div className="bg-[#181d26] border-b border-[#242b38] px-4 py-2 text-xs flex items-center justify-between text-[#d6cfc3]">
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
+      {/* Top Banner: Scan to order & Recent orders notification strip */}
+      <div className="bg-[#181d26] border-b border-[#242b38] px-4 py-2 text-xs text-[#d6cfc3]">
+        <div className="max-w-7xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Smartphone className="w-3.5 h-3.5 text-[#00a854]" />
             <span>
@@ -326,13 +367,25 @@ export default function App() {
             </span>
           </div>
 
-          <button
-            onClick={() => setIsScanModalOpen(true)}
-            className="flex items-center gap-1.5 text-[#f59e0b] hover:text-[#fbbf24] font-bold text-xs uppercase tracking-wider"
-          >
-            <QrCode className="w-3.5 h-3.5" />
-            <span>Show Table QR Code</span>
-          </button>
+          <div className="flex items-center gap-3">
+            {recentOrders.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setIsRecentOrdersModalOpen(true)}
+                className="flex items-center gap-1.5 text-[#c4bdaf] hover:text-[#f8f5ee] font-semibold text-xs transition-colors"
+              >
+                <Clock className="w-3.5 h-3.5 text-[#f59e0b]" />
+                <span>Recent Orders ({recentOrders.length})</span>
+              </button>
+            )}
+            <button
+              onClick={() => setIsScanModalOpen(true)}
+              className="flex items-center gap-1.5 text-[#f59e0b] hover:text-[#fbbf24] font-bold text-xs uppercase tracking-wider"
+            >
+              <QrCode className="w-3.5 h-3.5" />
+              <span>Show Table QR Code</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -479,8 +532,12 @@ export default function App() {
         onQuickAdd={handleQuickAdd}
       />
 
-      {/* Footer */}
-      <Footer />
+      {/* Footer with Recent Orders Section */}
+      <Footer
+        recentOrders={recentOrders}
+        onOpenRecentOrders={() => setIsRecentOrdersModalOpen(true)}
+        onSelectOrderForReceipt={(order) => setRecentPlacedOrder(order)}
+      />
 
       {/* Dish Detail Modal */}
       <DishModal
@@ -510,7 +567,17 @@ export default function App() {
         onSelectTable={(table) => setDiningDetails({ ...diningDetails, tableNumber: table })}
       />
 
-      {/* Order Success Ticket */}
+      {/* Recent Orders Modal (Last 5 orders) */}
+      <RecentOrdersModal
+        isOpen={isRecentOrdersModalOpen}
+        onClose={() => setIsRecentOrdersModalOpen(false)}
+        recentOrders={recentOrders}
+        onSelectOrderForReceipt={(order) => setRecentPlacedOrder(order)}
+        onReorderItems={handleReorderItems}
+        onClearHistory={handleClearHistory}
+      />
+
+      {/* Order Success Ticket & Printable Receipt */}
       <OrderSuccessModal
         order={recentPlacedOrder}
         onClose={() => setRecentPlacedOrder(null)}

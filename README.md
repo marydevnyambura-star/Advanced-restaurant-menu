@@ -21,7 +21,8 @@ A modern, responsive fast food restaurant menu and contactless table-ordering we
 - **Cellar Wines & Sangria**: Cape Chenin Blanc, Robertson Cabernet Sauvignon, and Chilled Citrus-Berry Sangria carafes.
 
 ### 3. 📱 Contactless "Scan to Order on Phone"
-- **Table QR Code Generator**: Generates clean, scannable SVG QR codes for every dining table (`Table 01`, `Table 04`, `Terrace 02`, etc.).
+- **Real Camera-Scannable QR Codes**: Generates authentic, standards-compliant (ISO/IEC 18004) high-resolution QR codes that scan directly from any iPhone camera, Google Lens, or Android scanner without requiring any special app.
+- **Table QR Code Generator**: Generates clean, scannable QR codes for every dining table (`Table 01`, `Table 04`, `Terrace 02`, etc.) with one-click PNG download for printing physical table tent cards.
 - **URL Parameter Detection**: Direct links (e.g., `?table=Table+04`) automatically assign the customer's table on mobile arrival with a welcome notification.
 - **Copy Direct Link**: Share or bookmark table links for fast testing or digital guest directories.
 
@@ -32,6 +33,7 @@ A modern, responsive fast food restaurant menu and contactless table-ordering we
   - **Debit/Credit Card**: Visa and Mastercard support.
   - **Cash**: Pay at table or pickup counter.
 - **Printable Thermal Receipt**: Dedicated "Print Receipt" button on the order confirmation screen formatting a clean, high-contrast, printer-friendly receipt using CSS print media queries.
+- **Recent Orders Log**: Stores the last 5 placed orders on the device in `localStorage`, accessible both from a dedicated footer section and an interactive modal. Users can view timestamps, item breakdowns, reprint receipts, or re-order past meals with a single click.
 - **Bill Split Calculator**: Split totals evenly in KSh among 2 to 8 guests.
 - **Crew Gratuity**: Quick tip selection (`50/=`, `100/=`, `150/=`, `200/=`, or custom).
 
