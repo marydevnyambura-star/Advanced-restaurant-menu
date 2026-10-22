@@ -11,6 +11,11 @@ export type DietaryTag =
 
 export interface CustomizationOption {
   spiceLevel?: string[];
+  portionSizes?: { name: string; price: number }[];
+  accompaniments?: { name: string; price: number }[];
+  scoopOptions?: { count: number; name: string; price: number }[];
+  iceCreamFlavors?: string[];
+  sauceToppings?: { name: string; price: number }[];
   iceLevel?: ('Normal Ice' | 'Extra Ice' | 'No Ice')[];
   sweetnessLevel?: ('100% Regular' | 'Less Sweet (50%)' | 'No Sugar Added')[];
   glassOrBottle?: ('By the Glass' | 'Full Bottle / Carafe')[];
@@ -26,6 +31,9 @@ export interface Dish {
   subtitle?: string;
   price: number; // in Kenyan Shillings (KSh)
   category:
+    | 'african'
+    | 'platters'
+    | 'desserts'
     | 'burgers'
     | 'chicken'
     | 'fries'
@@ -35,8 +43,7 @@ export interface Dish {
     | 'sodas'
     | 'cocktails'
     | 'mocktails'
-    | 'wines'
-    | 'desserts';
+    | 'wines';
   description: string;
   ingredients: string[];
   allergens: string[];
@@ -54,6 +61,11 @@ export interface Dish {
   isChefSpecial?: boolean;
   isAvailable: boolean;
   featuredNote?: string;
+  // Platter & sharing fields
+  servesCount?: string;
+  includedItems?: string[];
+  platterFilter?: 'individual' | 'sharing' | 'family' | 'vegetarian';
+  isSamplePriceConfirmed?: boolean; // For newly added African/Platter/Dessert items
 }
 
 export interface CartItem {
@@ -61,6 +73,11 @@ export interface CartItem {
   dish: Dish;
   quantity: number;
   selectedSpiceLevel?: string;
+  selectedPortionSize?: { name: string; price: number };
+  selectedAccompaniment?: { name: string; price: number };
+  selectedScoopCount?: { count: number; name: string; price: number };
+  selectedFlavors?: string[];
+  selectedSauceToppings?: { name: string; price: number }[];
   selectedIceLevel?: string;
   selectedSweetness?: string;
   selectedServingSize?: string;

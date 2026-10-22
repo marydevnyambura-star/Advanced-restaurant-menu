@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Dish } from '../types/menu';
-import { Plus, Wine, CupSoda, GlassWater, Utensils } from 'lucide-react';
+import { Plus, Wine, CupSoda, GlassWater, Utensils, Users, Sparkles } from 'lucide-react';
 
 interface DishCardProps {
   dish: Dish;
@@ -33,6 +33,25 @@ export const DishCard: React.FC<DishCardProps> = ({
     })
     .join(' · ');
 
+  const getCategoryLabel = () => {
+    switch (dish.category) {
+      case 'african': return 'African Cuisine';
+      case 'platters': return 'Sharing Platter';
+      case 'desserts': return 'Ice Cream & Dessert';
+      case 'burgers': return 'Smash Burger';
+      case 'chicken': return 'Crispy Chicken';
+      case 'fries': return 'Loaded Fries';
+      case 'street': return 'Street Smocha';
+      case 'combos': return 'Value Combo';
+      case 'juices': return 'Fresh Juice & Shake';
+      case 'mocktails': return 'Mocktail (0.0%)';
+      case 'cocktails': return 'Diner Cocktail';
+      case 'wines': return 'Cellar Wine';
+      case 'sodas': return 'Chilled Soda';
+      default: return dish.category;
+    }
+  };
+
   const getFallbackIcon = () => {
     if (dish.category === 'wines') return <Wine className="w-10 h-10 text-[#f59e0b]/40 mb-2" />;
     if (dish.category === 'cocktails' || dish.category === 'mocktails') return <GlassWater className="w-10 h-10 text-[#f59e0b]/40 mb-2" />;
@@ -59,7 +78,7 @@ export const DishCard: React.FC<DishCardProps> = ({
           <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-[#1d232e] to-[#12161e]">
             {getFallbackIcon()}
             <span className="text-xs uppercase tracking-widest text-[#a39c8e] font-semibold">
-              {dish.category}
+              {getCategoryLabel()}
             </span>
             <span className="font-serif text-sm text-[#ded8cc] mt-1 line-clamp-1">
               {dish.name}
@@ -67,10 +86,19 @@ export const DishCard: React.FC<DishCardProps> = ({
           </div>
         )}
 
-        {/* Featured Tag: Max 1 mark */}
+        {/* Featured Tag: Max 1 prominent mark */}
         {dish.featuredNote && (
-          <div className="absolute top-3 left-3 bg-[#0f1217]/90 backdrop-blur-sm text-[#fcd34d] text-[11px] font-bold tracking-wide px-2.5 py-1 rounded-lg border border-[#f59e0b]/30">
-            {dish.featuredNote}
+          <div className="absolute top-3 left-3 bg-[#0f1217]/90 backdrop-blur-sm text-[#fcd34d] text-[11px] font-bold tracking-wide px-2.5 py-1 rounded-lg border border-[#f59e0b]/30 flex items-center gap-1 shadow-sm">
+            <Sparkles className="w-3 h-3 text-[#f59e0b]" />
+            <span>{dish.featuredNote}</span>
+          </div>
+        )}
+
+        {/* Serving Size badge for Platters */}
+        {dish.servesCount && (
+          <div className="absolute bottom-3 left-3 bg-[#0f1217]/90 backdrop-blur-sm text-[#34d399] text-[11px] font-bold tracking-wide px-2.5 py-1 rounded-lg border border-[#34d399]/30 flex items-center gap-1.5 shadow-sm">
+            <Users className="w-3.5 h-3.5 text-[#34d399]" />
+            <span>{dish.servesCount}</span>
           </div>
         )}
 
@@ -94,10 +122,10 @@ export const DishCard: React.FC<DishCardProps> = ({
       {/* Card Content */}
       <div className="flex-1 p-5 flex flex-col justify-between">
         <div>
-          {/* Unboxed Metadata: Category, prep time, dietary tags */}
+          {/* Metadata: Category, prep time, dietary tags */}
           <div className="flex items-center gap-1.5 text-xs text-[#8a8376] mb-1.5 flex-wrap">
             <span className="uppercase tracking-wider font-semibold text-[#f59e0b] text-[11px]">
-              {dish.category}
+              {getCategoryLabel()}
             </span>
             <span aria-hidden="true">·</span>
             <span>{dish.prepTime}</span>
@@ -124,6 +152,15 @@ export const DishCard: React.FC<DishCardProps> = ({
           <p className="text-xs text-[#b0a89a] line-clamp-2 leading-relaxed mb-4">
             {dish.description}
           </p>
+
+          {/* Included Items Pill summary for Platters */}
+          {dish.includedItems && dish.includedItems.length > 0 && (
+            <div className="mb-3 p-2 bg-[#10131a] rounded-lg border border-[#232a38] text-[11px] text-[#9c9588]">
+              <span className="text-[#f59e0b] font-semibold">Includes: </span>
+              {dish.includedItems.slice(0, 3).join(', ')}
+              {dish.includedItems.length > 3 && ` +${dish.includedItems.length - 3} more`}
+            </div>
+          )}
         </div>
 
         {/* Beverage pairing hint if applicable */}
@@ -135,11 +172,19 @@ export const DishCard: React.FC<DishCardProps> = ({
 
         {/* Price & Action Row (in Kenyan Shillings) */}
         <div className="flex items-center justify-between pt-3 border-t border-[#232936]">
-          <div className="flex items-baseline gap-1">
-            <span className="text-xs font-bold text-[#f59e0b]">KSh</span>
-            <span className="text-xl font-mono tabular-nums font-bold text-[#fbf8f2]">
-              {dish.price.toLocaleString()}
-            </span>
+          <div className="flex flex-col">
+            <div className="flex items-baseline gap-1">
+              <span className="text-xs font-bold text-[#f59e0b]">KSh</span>
+              <span className="text-xl font-mono tabular-nums font-bold text-[#fbf8f2]">
+                {dish.price.toLocaleString()}
+              </span>
+            </div>
+            {dish.customization?.portionSizes && (
+              <span className="text-[10px] text-[#8e8779]">Portions Available</span>
+            )}
+            {dish.customization?.scoopOptions && (
+              <span className="text-[10px] text-[#8e8779]">1, 2, or 3 Scoops</span>
+            )}
           </div>
 
           <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
@@ -148,7 +193,7 @@ export const DishCard: React.FC<DishCardProps> = ({
               onClick={() => onOpenDetails(dish)}
               className="px-3 py-1.5 text-xs text-[#b8b0a2] hover:text-[#f8f5ee] hover:bg-[#202633] rounded-lg transition-colors whitespace-nowrap"
             >
-              Details
+              Customize
             </button>
             <button
               type="button"

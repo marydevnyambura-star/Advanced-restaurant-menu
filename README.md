@@ -6,19 +6,17 @@ A modern, responsive fast food restaurant menu and contactless table-ordering we
 
 ## ✨ Features
 
-### 1. Complete Fast Food & Local Street Food Menu
-- **Smash Burgers**: Double beef smash cheeseburgers, spicy crispy zinger chicken burgers, BBQ bacon stacks, and halloumi avocado veggie burgers.
-- **Crispy Fried Chicken**: 24-hour marinated buttermilk fried chicken buckets, spicy wings, and hand-breaded tenderloins with signature dipping sauces.
-- **Loaded Fries & Street Snacks**: Loaded peri-peri masala crinkle fries, cheesy garlic fries, crispy beef samosas, and potato bhajias with tamarind (*ukwaju*) chutney.
-- **Nairobi Street Smocha**: Flaky chapati wrapped around a flame-grilled smoked sausage with fresh tomato-onion *kachumbari* and spicy pili pili sauce.
-- **Value Combos & Family Feasts**: Multi-item meals with fries and drinks with built-in combo savings.
+### 1. Complete Fast Food, African Cuisine & Sharing Platters
+- **African Cuisine (Kenyan Specialties)**: Authentic charcoal-grilled *Nyama Choma* (beef/goat), *Mbuzi Choma*, *Ugali & Sukuma Wiki*, *Ugali with Lake Victoria Tilapia*, *Swahili Pilau*, *Mukimo*, *Githeri Special*, *Matoke Stew*, *Irio*, *Kuku Wet Fry*, *Kenyan Beef Wet Fry*, and *Traditional Power Breakfast* with portion sizes and accompaniments.
+- **Food Platters & Sharing Boards**: *Sizzle Mega Family Feast Platter* (serves 4–6), *Nyama Choma Mixed Grill Board*, *24-piece Crispy Wings Platter* in 3 glazes, *Burger & Sliders Combo Platter*, *Coastal Seafood Platter*, *Garden Harvest Vegetarian Platter*, and *Nairobi Party Snack Platter*.
+- **Premium Ice Cream & Desserts**: Golden Belgian buttermilk waffles with ice cream, fudgy brownie sizzler, 3-scoop artisan ice cream cups, New York berry cheesecake, classic banana splits, fluffy pancakes, and fresh tropical fruit salad with customizable scoops, flavors, and sauces.
+- **Fast Food Smashers & Street Kings**: Double smash cheeseburgers, spicy zinger burgers, 24-hr buttermilk fried chicken buckets, loaded peri-peri masala crinkle fries, and authentic Nairobi smocha rolls.
 
-### 2. Comprehensive Beverage Lounge
-- **Fresh Cold-Pressed Juices**: Pure Kenyan Passion Fruit, Sunshine Mango & Ginger, Watermelon Lime Hydrator, and Pineapple Mint Crush.
-- **Chilled Sodas & Floats**: Chilled Stoney Tangawizi, Coca-Cola Zero Sugar, Fanta Passion, and old-school Vanilla Ice Cream Soda Floats.
-- **Zero-Proof Mocktails (0.0% ABV)**: Passion & Mint Mojito Mocktail, Hibiscus Berry Spritz, and Tropical Sunrise Citrus Fizz.
-- **Diner Cocktails**: The Original Nairobi Dawa Cocktail (with acacia honey and traditional wooden dawa stick), Spiced Rum Passion Punch, and Classic Long Island Iced Tea.
-- **Cellar Wines & Sangria**: Cape Chenin Blanc, Robertson Cabernet Sauvignon, and Chilled Citrus-Berry Sangria carafes.
+### 2. Upgraded High-Resolution Beverage Lounge
+- **Fresh Cold-Pressed Juices**: Pure Kenyan Passion Fruit, Thick Ripe Mango Juice, Sweet Watermelon & Lime, Fresh Squeezed Orange Juice, Pineapple Mint Crush, and Tropical Mixed Fruit Splash.
+- **Milkshakes & Smoothies**: Rich Dark Chocolate Milkshakes, Madagascar Vanilla Bean Milkshakes, and Strawberry Bliss Greek Yogurt Smoothies.
+- **Artisan Zero-Proof Mocktails**: Electric Blue Lagoon Mocktail, Virgin Passion & Mint Mojito, Pineapple & Coconut Virgin Colada, and Hibiscus Berry Spritz.
+- **Diner Cocktails & Cellar Wines**: The Original Nairobi Dawa Cocktail (with pure acacia honey & dawa stick), Spiced Rum Passion Punch, Cape Chenin Blanc, and Robertson Cabernet Sauvignon.
 
 ### 3. 📱 Contactless "Scan to Order on Phone"
 - **Real Camera-Scannable QR Codes**: Generates authentic, standards-compliant (ISO/IEC 18004) high-resolution QR codes that scan directly from any iPhone camera, Google Lens, or Android scanner without requiring any special app.

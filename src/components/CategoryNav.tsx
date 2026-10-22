@@ -2,6 +2,9 @@ import React from 'react';
 
 export type CategoryFilter =
   | 'all'
+  | 'african'
+  | 'platters'
+  | 'desserts'
   | 'burgers'
   | 'chicken'
   | 'fries'
@@ -11,8 +14,7 @@ export type CategoryFilter =
   | 'sodas'
   | 'mocktails'
   | 'cocktails'
-  | 'wines'
-  | 'desserts';
+  | 'wines';
 
 interface CategoryNavProps {
   activeCategory: CategoryFilter;
@@ -22,17 +24,19 @@ interface CategoryNavProps {
 
 const CATEGORIES: { id: CategoryFilter; label: string }[] = [
   { id: 'all', label: 'All Items' },
+  { id: 'african', label: 'African Cuisine 🇰🇪' },
+  { id: 'platters', label: 'Food Platters & Combos' },
+  { id: 'desserts', label: 'Ice Cream & Desserts' },
   { id: 'burgers', label: 'Smash Burgers' },
   { id: 'chicken', label: 'Crispy Chicken' },
   { id: 'fries', label: 'Loaded Fries' },
   { id: 'street', label: 'Street Smocha' },
   { id: 'combos', label: 'Value Combos' },
-  { id: 'juices', label: 'Fresh Juices' },
-  { id: 'sodas', label: 'Chilled Sodas' },
-  { id: 'mocktails', label: 'Mocktails (0.0%)' },
+  { id: 'juices', label: 'Fresh Juices & Shakes' },
+  { id: 'mocktails', label: 'Zero-Proof Mocktails' },
   { id: 'cocktails', label: 'Diner Cocktails' },
   { id: 'wines', label: 'Wines & Sangria' },
-  { id: 'desserts', label: 'Doughnuts' },
+  { id: 'sodas', label: 'Chilled Sodas' },
 ];
 
 export const CategoryNav: React.FC<CategoryNavProps> = ({
@@ -51,9 +55,9 @@ export const CategoryNav: React.FC<CategoryNavProps> = ({
               <button
                 key={cat.id}
                 onClick={() => onSelectCategory(cat.id)}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
                   isActive
-                    ? 'bg-[#f59e0b] text-[#0f1115] shadow-sm'
+                    ? 'bg-[#f59e0b] text-[#0f1115] shadow-sm font-bold'
                     : 'text-[#9c9588] hover:text-[#f2ece2] hover:bg-[#1a1f29]'
                 }`}
               >

@@ -207,8 +207,12 @@ export const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({
                 <span className="w-3/12 text-right">KSh {item.itemTotal.toLocaleString()}</span>
               </div>
               {/* Modifiers & Notes */}
-              {(item.selectedSpiceLevel || item.selectedDrink || item.selectedSides.length > 0 || item.selectedAddons.length > 0) && (
+              {(item.selectedPortionSize || item.selectedAccompaniment || item.selectedScoopCount || item.selectedSpiceLevel || item.selectedDrink || item.selectedSides.length > 0 || item.selectedAddons.length > 0 || (item.selectedFlavors && item.selectedFlavors.length > 0)) && (
                 <div className="text-[10px] text-gray-700 pl-2">
+                  {item.selectedPortionSize && `• Portion: ${item.selectedPortionSize.name} `}
+                  {item.selectedAccompaniment && `• Side: ${item.selectedAccompaniment.name} `}
+                  {item.selectedScoopCount && `• Scoops: ${item.selectedScoopCount.name} `}
+                  {item.selectedFlavors && item.selectedFlavors.length > 0 && `• Flavors: ${item.selectedFlavors.join(', ')} `}
                   {item.selectedSpiceLevel && `• Spice: ${item.selectedSpiceLevel} `}
                   {item.selectedDrink && `• Drink: ${item.selectedDrink} `}
                   {item.selectedSides.map(s => `• Side: ${s.name} `)}

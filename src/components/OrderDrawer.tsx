@@ -139,6 +139,21 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
 
                         {/* Modifiers display */}
                         <div className="text-[11px] text-[#9c9588] space-y-0.5 mt-1">
+                          {item.selectedPortionSize && (
+                            <div>Portion: <span className="text-[#f59e0b] font-medium">{item.selectedPortionSize.name}</span></div>
+                          )}
+                          {item.selectedAccompaniment && (
+                            <div>Accompaniment: <span className="text-[#34d399] font-medium">{item.selectedAccompaniment.name}</span></div>
+                          )}
+                          {item.selectedScoopCount && (
+                            <div>Scoops: <span className="text-[#ded8cc]">{item.selectedScoopCount.name}</span></div>
+                          )}
+                          {item.selectedFlavors && item.selectedFlavors.length > 0 && (
+                            <div>Flavors: <span className="text-[#fcd34d]">{item.selectedFlavors.join(', ')}</span></div>
+                          )}
+                          {item.selectedSauceToppings && item.selectedSauceToppings.length > 0 && (
+                            <div>Toppings: <span className="text-[#ded8cc]">{item.selectedSauceToppings.map(t => t.name).join(', ')}</span></div>
+                          )}
                           {item.selectedSpiceLevel && (
                             <div>Spice: <span className="text-[#f59e0b] font-medium">{item.selectedSpiceLevel}</span></div>
                           )}

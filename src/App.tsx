@@ -26,7 +26,7 @@ export default function App() {
   // Menu State with LocalStorage Persistence
   const [dishes, setDishes] = useState<Dish[]>(() => {
     try {
-      const saved = localStorage.getItem('sizzle_menu_v3');
+      const saved = localStorage.getItem('sizzle_menu_v4');
       if (saved) return JSON.parse(saved);
     } catch (e) {
       console.warn('Could not read cached menu:', e);
@@ -36,7 +36,7 @@ export default function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('sizzle_menu_v3', JSON.stringify(dishes));
+      localStorage.setItem('sizzle_menu_v4', JSON.stringify(dishes));
     } catch (e) {
       console.warn('Could not persist menu:', e);
     }
@@ -91,6 +91,7 @@ export default function App() {
 
   // UI Filtering & Category States
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
+  const [platterSubFilter, setPlatterSubFilter] = useState<'all' | 'individual' | 'sharing' | 'family' | 'vegetarian'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDietary, setSelectedDietary] = useState<DietaryTag[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>('default');
@@ -139,6 +140,11 @@ export default function App() {
       list = list.filter((d) => d.category === activeCategory);
     }
 
+    // Filter by platter subcategory if in platters category
+    if (activeCategory === 'platters' && platterSubFilter !== 'all') {
+      list = list.filter((d) => d.platterFilter === platterSubFilter);
+    }
+
     // Filter by dietary tags
     if (selectedDietary.length > 0) {
       list = list.filter((d) =>
@@ -169,12 +175,15 @@ export default function App() {
     }
 
     return list;
-  }, [dishes, activeCategory, selectedDietary, searchQuery, sortBy]);
+  }, [dishes, activeCategory, platterSubFilter, selectedDietary, searchQuery, sortBy]);
 
   // Category counts
   const categoryCounts = useMemo(() => {
     const counts: Record<CategoryFilter, number> = {
       all: dishes.length,
+      african: 0,
+      platters: 0,
+      desserts: 0,
       burgers: 0,
       chicken: 0,
       fries: 0,
@@ -185,11 +194,10 @@ export default function App() {
       mocktails: 0,
       cocktails: 0,
       wines: 0,
-      desserts: 0,
     };
     dishes.forEach((d) => {
-      if (counts[d.category] !== undefined) {
-        counts[d.category]++;
+      if (counts[d.category as CategoryFilter] !== undefined) {
+        counts[d.category as CategoryFilter]++;
       }
     });
     return counts;
@@ -473,6 +481,34 @@ export default function App() {
 
         {/* Items Grid */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          {/* Dedicated Sub-Filters for Food Platters Category */}
+          {activeCategory === 'platters' && (
+            <div className="mb-6 p-3 rounded-xl bg-[#141822] border border-[#272e3c] flex flex-wrap items-center gap-2">
+              <span className="text-xs uppercase font-bold tracking-wider text-[#a0988a] mr-1">
+                Platter Format:
+              </span>
+              {[
+                { id: 'all', label: 'All Platters' },
+                { id: 'sharing', label: 'Sharing Boards (2–4 Diners)' },
+                { id: 'family', label: 'Family Feasts (4–6+ Diners)' },
+                { id: 'vegetarian', label: 'Vegetarian Sharing' },
+                { id: 'individual', label: 'Individual Meal Plates' },
+              ].map((sub) => (
+                <button
+                  key={sub.id}
+                  onClick={() => setPlatterSubFilter(sub.id as any)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                    platterSubFilter === sub.id
+                      ? 'bg-[#f59e0b] text-[#0f1115] font-bold shadow-xs'
+                      : 'bg-[#1b202c] text-[#a0988a] hover:text-[#f8f5ee] hover:bg-[#222938]'
+                  }`}
+                >
+                  {sub.label}
+                </button>
+              ))}
+            </div>
+          )}
+
           <div className="mb-6 flex items-center justify-between text-xs text-[#8a8376]">
             <div>
               Showing <span className="font-bold text-[#f8f5ee]">{filteredDishes.length}</span> items

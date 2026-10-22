@@ -42,28 +42,39 @@ export const Hero: React.FC<HeroProps> = ({
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#fbf8f2] leading-[1.12] mb-4">
-            Juicy smash burgers, crispy chicken, and loaded fries.
+            Juicy smash burgers, Kenyan nyama choma & sharing platters.
           </h1>
 
           <p className="text-base sm:text-lg text-[#b8b0a2] leading-relaxed mb-6 max-w-2xl">
-            Order directly from your table in Kenyan Shillings. Enjoy freshly fried chicken buckets, authentic Nairobi smochas, and ice-cold shakes with instant M-Pesa or card checkout.
+            Order directly from your table in Kenyan Shillings (KSh). Enjoy authentic African cuisine, crispy fried chicken, loaded fries, Belgian dessert waffles, and freshly pressed cold juices with instant M-Pesa or card checkout.
           </p>
 
-          {/* Adjacency & Provenance Info */}
+          {/* Adjacency & Provenance Info with Google Maps Link */}
           <div className="flex flex-wrap items-center gap-y-2 gap-x-6 text-xs text-[#a0988a] mb-8 pb-5 border-b border-[#292f3d]">
-            <span className="flex items-center gap-1.5">
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Moi+Avenue+Westlands+Nairobi+Kenya"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-[#ded8cb] hover:text-[#f59e0b] transition-colors"
+              title="Open Nairobi Location in Google Maps"
+            >
               <MapPin className="w-3.5 h-3.5 text-[#f59e0b]" />
-              Westlands / Moi Ave, Nairobi
+              <span className="underline decoration-dotted underline-offset-4">Westlands Mall & CBD Moi Ave, Nairobi ↗</span>
+            </a>
+            <span aria-hidden="true" className="text-[#444a56]">·</span>
+            <span className="flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-[#f59e0b]" />
+              Mon–Sun 10:00 AM – Midnight
             </span>
             <span aria-hidden="true" className="text-[#444a56]">·</span>
             <span className="flex items-center gap-1.5">
               <Zap className="w-3.5 h-3.5 text-[#f59e0b]" />
-              Average Prep: 8–12 Minutes
+              Average Prep: 8–12 Min
             </span>
             <span aria-hidden="true" className="text-[#444a56]">·</span>
             <span className="flex items-center gap-1.5">
-              <Smartphone className="w-3.5 h-3.5 text-[#f59e0b]" />
-              Pay via M-Pesa Express, Card, or Cash
+              <Smartphone className="w-3.5 h-3.5 text-[#22c55e]" />
+              M-Pesa Express, Card & Cash
             </span>
           </div>
 

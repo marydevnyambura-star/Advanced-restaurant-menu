@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Dish, CartItem } from '../types/menu';
-import { X, Check, Plus, Minus, AlertCircle, Flame, CupSoda, Utensils, Wine, GlassWater } from 'lucide-react';
+import { X, Check, Plus, Minus, CupSoda, Utensils, Wine, GlassWater, Users, Sparkles } from 'lucide-react';
 
 interface DishModalProps {
   dish: Dish | null;
@@ -19,6 +19,19 @@ export const DishModal: React.FC<DishModalProps> = ({
   const [selectedSpiceLevel, setSelectedSpiceLevel] = useState<string | undefined>(
     dish.customization?.spiceLevel ? dish.customization.spiceLevel[0] : undefined
   );
+  const [selectedPortionSize, setSelectedPortionSize] = useState<{ name: string; price: number } | undefined>(
+    dish.customization?.portionSizes ? dish.customization.portionSizes[0] : undefined
+  );
+  const [selectedAccompaniment, setSelectedAccompaniment] = useState<{ name: string; price: number } | undefined>(
+    dish.customization?.accompaniments ? dish.customization.accompaniments[0] : undefined
+  );
+  const [selectedScoopCount, setSelectedScoopCount] = useState<{ count: number; name: string; price: number } | undefined>(
+    dish.customization?.scoopOptions ? dish.customization.scoopOptions[0] : undefined
+  );
+  const [selectedFlavors, setSelectedFlavors] = useState<string[]>(
+    dish.customization?.iceCreamFlavors ? [dish.customization.iceCreamFlavors[0]] : []
+  );
+  const [selectedSauceToppings, setSelectedSauceToppings] = useState<{ name: string; price: number }[]>([]);
   const [selectedIceLevel, setSelectedIceLevel] = useState<string | undefined>(
     dish.customization?.iceLevel ? dish.customization.iceLevel[0] : undefined
   );
@@ -54,6 +67,28 @@ export const DishModal: React.FC<DishModalProps> = ({
     );
   };
 
+  const handleToggleSauceTopping = (topping: { name: string; price: number }) => {
+    setSelectedSauceToppings(prev =>
+      prev.some(t => t.name === topping.name)
+        ? prev.filter(t => t.name !== topping.name)
+        : [...prev, topping]
+    );
+  };
+
+  const handleToggleFlavor = (flavor: string) => {
+    const maxFlavors = selectedScoopCount ? selectedScoopCount.count : 2;
+    setSelectedFlavors(prev => {
+      if (prev.includes(flavor)) {
+        return prev.length > 1 ? prev.filter(f => f !== flavor) : prev;
+      } else {
+        if (prev.length >= maxFlavors) {
+          return [...prev.slice(1), flavor];
+        }
+        return [...prev, flavor];
+      }
+    });
+  };
+
   const handleToggleAdjustment = (adj: string) => {
     setSelectedAdjustments(prev =>
       prev.includes(adj) ? prev.filter(a => a !== adj) : [...prev, adj]
@@ -61,10 +96,15 @@ export const DishModal: React.FC<DishModalProps> = ({
   };
 
   // Pricing calculation in Kenyan Shillings
+  const portionPrice = selectedPortionSize ? selectedPortionSize.price : 0;
+  const accompanimentPrice = selectedAccompaniment ? selectedAccompaniment.price : 0;
+  const scoopPrice = selectedScoopCount ? selectedScoopCount.price : 0;
+  const toppingsTotal = selectedSauceToppings.reduce((sum, t) => sum + t.price, 0);
   const sidesTotal = selectedSides.reduce((sum, s) => sum + s.price, 0);
   const addonsTotal = selectedAddons.reduce((sum, a) => sum + a.price, 0);
   const beveragePrice = includeBeveragePairing && dish.beveragePairing ? dish.beveragePairing.price : 0;
-  const unitPrice = dish.price + sidesTotal + addonsTotal + beveragePrice;
+
+  const unitPrice = dish.price + portionPrice + accompanimentPrice + scoopPrice + toppingsTotal + sidesTotal + addonsTotal + beveragePrice;
   const itemTotal = unitPrice * quantity;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -75,6 +115,11 @@ export const DishModal: React.FC<DishModalProps> = ({
       dish,
       quantity,
       selectedSpiceLevel,
+      selectedPortionSize,
+      selectedAccompaniment,
+      selectedScoopCount,
+      selectedFlavors,
+      selectedSauceToppings,
       selectedIceLevel,
       selectedSweetness,
       selectedServingSize,
@@ -131,6 +176,14 @@ export const DishModal: React.FC<DishModalProps> = ({
               </div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#141822] via-transparent to-transparent md:hidden" />
+
+            {/* Serving Size Badge for Platters */}
+            {dish.servesCount && (
+              <div className="absolute bottom-4 left-4 bg-[#0f1217]/90 backdrop-blur-sm text-[#34d399] text-xs font-bold px-3 py-1.5 rounded-lg border border-[#34d399]/40 flex items-center gap-1.5 shadow-md">
+                <Users className="w-4 h-4 text-[#34d399]" />
+                <span>{dish.servesCount}</span>
+              </div>
+            )}
           </div>
 
           <div className="p-5 border-t border-[#262e3d] bg-[#11141c]/95 hidden md:block">
@@ -138,164 +191,243 @@ export const DishModal: React.FC<DishModalProps> = ({
               {isDrinkCategory ? 'Diner Beverage Service' : 'Freshly Prepared to Order'}
             </div>
             <p className="text-xs text-[#a0988a] leading-relaxed">
-              {isDrinkCategory
-                ? 'Crafted with premium spirits, tree-ripened tropical fruit pulp, and purified ice.'
-                : 'Cooked fresh on the iron grill and fryer for maximum juiciness and crunch.'}
+              All meals are prepared fresh to order in our Nairobi kitchen using 100% Halal beef, poultry, and local farm produce.
             </p>
           </div>
         </div>
 
-        {/* Right Column: Customizer & Purchase Module */}
-        <div className="md:w-7/12 flex-1 flex flex-col max-h-[92vh] overflow-y-auto p-5 sm:p-7">
-          <form onSubmit={handleSubmit} className="flex-1 flex flex-col justify-between">
+        {/* Right Column: Customization Form & Pricing */}
+        <div className="md:w-7/12 p-6 md:p-8 flex flex-col justify-between overflow-y-auto max-h-[85vh] md:max-h-[92vh]">
+          <form onSubmit={handleSubmit} className="flex flex-col justify-between flex-1">
             <div className="space-y-6">
               {/* Header */}
               <div>
-                <div className="flex items-center gap-2 text-xs text-[#8e8779] mb-1.5 flex-wrap">
-                  <span className="uppercase tracking-wider font-bold text-[#f59e0b]">
-                    {dish.category}
-                  </span>
+                <div className="flex items-center gap-2 text-xs text-[#f59e0b] font-semibold uppercase tracking-wider mb-1">
+                  <span>{dish.category}</span>
                   <span aria-hidden="true">·</span>
-                  <span>Ready in {dish.prepTime}</span>
-                  {dish.alcoholByVolume && (
+                  <span>{dish.prepTime}</span>
+                  {dish.servesCount && (
                     <>
                       <span aria-hidden="true">·</span>
-                      <span className="font-mono text-[#fcd34d] font-semibold">{dish.alcoholByVolume}</span>
-                    </>
-                  )}
-                  {dish.calories && (
-                    <>
-                      <span aria-hidden="true">·</span>
-                      <span className="font-mono tabular-nums">{dish.calories} kcal</span>
+                      <span className="text-[#34d399] font-bold">{dish.servesCount}</span>
                     </>
                   )}
                 </div>
-
-                <h2 className="text-2xl sm:text-3xl font-serif text-[#f8f5ee] font-bold leading-tight">
+                <h2 className="text-2xl font-serif font-bold text-[#f8f5ee] leading-tight">
                   {dish.name}
                 </h2>
-
                 {dish.subtitle && (
-                  <p className="text-sm font-medium text-[#c4bdaf] mt-0.5">
-                    {dish.subtitle}
-                  </p>
+                  <p className="text-xs text-[#b8b0a2] mt-1 font-medium">{dish.subtitle}</p>
                 )}
-
-                <p className="text-xs sm:text-sm text-[#aba395] leading-relaxed mt-3">
+                <p className="text-xs text-[#a39c8e] mt-2.5 leading-relaxed">
                   {dish.description}
                 </p>
               </div>
 
-              {/* Ingredients & Allergens */}
-              <div className="p-3.5 rounded-xl bg-[#10131b] border border-[#232936] space-y-2 text-xs">
-                <div>
-                  <span className="text-[#8e8779] font-medium">Ingredients: </span>
-                  <span className="text-[#ded8cc]">{dish.ingredients.join(', ')}</span>
+              {/* Platter Included Items List */}
+              {dish.includedItems && dish.includedItems.length > 0 && (
+                <div className="p-4 rounded-xl bg-[#181d26] border border-[#2b3342] space-y-2">
+                  <div className="text-xs font-bold uppercase tracking-wider text-[#f59e0b] flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Platter Inclusions (Feast Spread):</span>
+                  </div>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-[#ded8cc]">
+                    {dish.includedItems.map((inc, i) => (
+                      <li key={i} className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#f59e0b]" />
+                        <span>{inc}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                {dish.allergens.length > 0 && (
-                  <div className="flex items-center gap-1.5 text-[#f59e0b]">
-                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                    <span>Contains: {dish.allergens.join(', ')}</span>
-                  </div>
-                )}
-                {dish.dietary.includes('alcoholic') && (
-                  <div className="text-[11px] text-[#f87171] font-semibold">
-                    * Alcoholic Beverage: strictly for guests aged 18 and older.
-                  </div>
-                )}
-              </div>
+              )}
 
-              {/* Ice Level for Drinks */}
-              {dish.customization?.iceLevel && (
+              {/* Portion Sizes Selection (African dishes & Platters) */}
+              {dish.customization?.portionSizes && dish.customization.portionSizes.length > 0 && (
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#ded8cb] mb-2">
-                    Ice Preference
+                    Select Portion Size
                   </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {dish.customization.iceLevel.map((ice) => (
-                      <button
-                        type="button"
-                        key={ice}
-                        onClick={() => setSelectedIceLevel(ice)}
-                        className={`px-3 py-2 text-xs text-center rounded-xl transition-colors border ${
-                          selectedIceLevel === ice
-                            ? 'bg-[#f59e0b]/20 border-[#f59e0b] text-[#fcd34d] font-bold'
-                            : 'bg-[#181d26] border-[#29303e] text-[#a0998c] hover:border-[#3d475a]'
-                        }`}
-                      >
-                        {ice}
-                      </button>
-                    ))}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {dish.customization.portionSizes.map((portion) => {
+                      const isSelected = selectedPortionSize?.name === portion.name;
+                      return (
+                        <button
+                          type="button"
+                          key={portion.name}
+                          onClick={() => setSelectedPortionSize(portion)}
+                          className={`p-2.5 text-xs rounded-xl border text-left transition-colors ${
+                            isSelected
+                              ? 'bg-[#f59e0b]/20 border-[#f59e0b] text-[#fcd34d] font-bold'
+                              : 'bg-[#181d26] border-[#29303e] text-[#a0998c] hover:border-[#3d475a]'
+                          }`}
+                        >
+                          <div>{portion.name}</div>
+                          <div className="text-[11px] font-mono text-[#f59e0b] mt-0.5">
+                            {portion.price === 0 ? 'Included' : `+KSh ${portion.price.toLocaleString()}`}
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
 
-              {/* Sweetness Level for Juices & Mocktails */}
-              {dish.customization?.sweetnessLevel && (
+              {/* Accompaniments (Ugali, Chapati, Pilau Rice, Fries, etc.) */}
+              {dish.customization?.accompaniments && dish.customization.accompaniments.length > 0 && (
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#ded8cb] mb-2">
-                    Sweetness Level
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#ded8cb] mb-2 flex items-center justify-between">
+                    <span>Choice of Accompaniment</span>
+                    <span className="text-[10px] text-[#8e8779] normal-case">Pick 1 Included/Upgrade</span>
                   </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {dish.customization.sweetnessLevel.map((sweet) => (
-                      <button
-                        type="button"
-                        key={sweet}
-                        onClick={() => setSelectedSweetness(sweet)}
-                        className={`px-3 py-2 text-xs text-center rounded-xl transition-colors border ${
-                          selectedSweetness === sweet
-                            ? 'bg-[#f59e0b]/20 border-[#f59e0b] text-[#fcd34d] font-bold'
-                            : 'bg-[#181d26] border-[#29303e] text-[#a0998c] hover:border-[#3d475a]'
-                        }`}
-                      >
-                        {sweet}
-                      </button>
-                    ))}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {dish.customization.accompaniments.map((acc) => {
+                      const isSelected = selectedAccompaniment?.name === acc.name;
+                      return (
+                        <button
+                          type="button"
+                          key={acc.name}
+                          onClick={() => setSelectedAccompaniment(acc)}
+                          className={`flex items-center justify-between p-2.5 text-xs rounded-xl border transition-colors ${
+                            isSelected
+                              ? 'bg-[#f59e0b]/20 border-[#f59e0b] text-[#fcd34d] font-bold'
+                              : 'bg-[#181d26] border-[#29303e] text-[#a0998c] hover:border-[#3d475a]'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${isSelected ? 'border-[#f59e0b] bg-[#f59e0b]' : 'border-[#434c5e]'}`}>
+                              {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-[#0f1115]" />}
+                            </div>
+                            <span className="truncate">{acc.name}</span>
+                          </div>
+                          <span className="text-[11px] font-mono text-[#f59e0b] ml-1 shrink-0">
+                            {acc.price === 0 ? 'Included' : `+KSh ${acc.price}`}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
 
-              {/* Glass or Bottle selection for wines */}
-              {dish.customization?.glassOrBottle && (
+              {/* Ice Cream Scoop Selection & Flavors */}
+              {dish.customization?.scoopOptions && (
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#ded8cb] mb-2">
-                    Serving Option
+                    Number of Scoops
+                  </label>
+                  <div className="flex gap-2">
+                    {dish.customization.scoopOptions.map((opt) => {
+                      const isSelected = selectedScoopCount?.name === opt.name;
+                      return (
+                        <button
+                          type="button"
+                          key={opt.name}
+                          onClick={() => setSelectedScoopCount(opt)}
+                          className={`flex-1 py-2 px-3 text-xs rounded-xl border text-center transition-colors ${
+                            isSelected
+                              ? 'bg-[#f59e0b]/20 border-[#f59e0b] text-[#fcd34d] font-bold'
+                              : 'bg-[#181d26] border-[#29303e] text-[#a0998c] hover:border-[#3d475a]'
+                          }`}
+                        >
+                          <div>{opt.name}</div>
+                          <div className="text-[10px] font-mono text-[#f59e0b]">
+                            {opt.price === 0 ? 'Standard' : opt.price > 0 ? `+KSh ${opt.price}` : `-KSh ${Math.abs(opt.price)}`}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Ice Cream Flavors */}
+              {dish.customization?.iceCreamFlavors && (
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#ded8cb] mb-2 flex items-center justify-between">
+                    <span>Choose Flavor(s)</span>
+                    <span className="text-[10px] text-[#8e8779]">
+                      Up to {selectedScoopCount?.count ?? 2} scoops
+                    </span>
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {dish.customization.iceCreamFlavors.map((flavor) => {
+                      const isSelected = selectedFlavors.includes(flavor);
+                      return (
+                        <button
+                          type="button"
+                          key={flavor}
+                          onClick={() => handleToggleFlavor(flavor)}
+                          className={`p-2 text-xs rounded-xl border text-left truncate transition-colors ${
+                            isSelected
+                              ? 'bg-[#f59e0b]/20 border-[#f59e0b] text-[#fcd34d] font-bold'
+                              : 'bg-[#181d26] border-[#29303e] text-[#a0998c] hover:border-[#3d475a]'
+                          }`}
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <div className={`w-3 h-3 rounded flex items-center justify-center border ${isSelected ? 'bg-[#f59e0b] border-[#f59e0b] text-[#0f1115]' : 'border-[#434c5e]'}`}>
+                              {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                            </div>
+                            <span className="truncate">{flavor}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Dessert Sauce Toppings */}
+              {dish.customization?.sauceToppings && dish.customization.sauceToppings.length > 0 && (
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#ded8cb] mb-2">
+                    Sauces & Drizzles
                   </label>
                   <div className="grid grid-cols-2 gap-2">
-                    {dish.customization.glassOrBottle.map((opt) => (
-                      <button
-                        type="button"
-                        key={opt}
-                        onClick={() => setSelectedServingSize(opt)}
-                        className={`px-3 py-2 text-xs text-center rounded-xl transition-colors border ${
-                          selectedServingSize === opt
-                            ? 'bg-[#f59e0b]/20 border-[#f59e0b] text-[#fcd34d] font-bold'
-                            : 'bg-[#181d26] border-[#29303e] text-[#a0998c] hover:border-[#3d475a]'
-                        }`}
-                      >
-                        {opt}
-                      </button>
-                    ))}
+                    {dish.customization.sauceToppings.map((topping) => {
+                      const isSelected = selectedSauceToppings.some(t => t.name === topping.name);
+                      return (
+                        <button
+                          type="button"
+                          key={topping.name}
+                          onClick={() => handleToggleSauceTopping(topping)}
+                          className={`flex items-center justify-between p-2 text-xs rounded-xl border transition-colors ${
+                            isSelected
+                              ? 'bg-[#f59e0b]/20 border-[#f59e0b] text-[#fcd34d] font-bold'
+                              : 'bg-[#181d26] border-[#29303e] text-[#a0998c] hover:border-[#3d475a]'
+                          }`}
+                        >
+                          <div className="flex items-center gap-1.5 truncate">
+                            <div className={`w-3 h-3 rounded flex items-center justify-center border ${isSelected ? 'bg-[#f59e0b] border-[#f59e0b] text-[#0f1115]' : 'border-[#434c5e]'}`}>
+                              {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                            </div>
+                            <span className="truncate">{topping.name}</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-[#f59e0b] ml-1 shrink-0">
+                            {topping.price === 0 ? 'Free' : `+KSh ${topping.price}`}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
 
-              {/* Spice Level Option */}
+              {/* Spice Level for Burgers / Fried Chicken / African */}
               {dish.customization?.spiceLevel && (
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#ded8cb] mb-2 flex items-center gap-1.5">
-                    <Flame className="w-3.5 h-3.5 text-[#ef4444]" />
-                    <span>Choose Your Heat Level</span>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#ded8cb] mb-2">
+                    Spice / Heat Level
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {dish.customization.spiceLevel.map((spice) => (
                       <button
                         type="button"
                         key={spice}
                         onClick={() => setSelectedSpiceLevel(spice)}
-                        className={`px-3 py-2 text-xs text-center rounded-xl transition-colors border ${
+                        className={`px-3 py-1.5 text-xs rounded-xl transition-colors border ${
                           selectedSpiceLevel === spice
-                            ? 'bg-[#f59e0b]/20 border-[#f59e0b] text-[#fcd34d] font-bold'
+                            ? 'bg-[#f59e0b] text-[#0f1115] font-bold border-[#f59e0b]'
                             : 'bg-[#181d26] border-[#29303e] text-[#a0998c] hover:border-[#3d475a]'
                         }`}
                       >
@@ -405,14 +537,14 @@ export const DishModal: React.FC<DishModalProps> = ({
               {/* Special Instructions */}
               <div>
                 <label htmlFor="instructions" className="block text-xs font-bold uppercase tracking-wider text-[#ded8cb] mb-1.5">
-                  Special Notes (e.g. Extra ice, straw, slice of lemon)
+                  Special Notes (e.g. Extra napkins, no chili, straw)
                 </label>
                 <input
                   type="text"
                   id="instructions"
                   value={specialInstructions}
                   onChange={(e) => setSpecialInstructions(e.target.value)}
-                  placeholder="e.g. Extra napkins, no ice, extra lime..."
+                  placeholder="e.g. Extra hot pili pili, well done, cutlery..."
                   className="w-full bg-[#10131b] border border-[#262c3a] rounded-lg p-2.5 text-xs text-[#f4efe6] placeholder-[#666055] focus:outline-none focus:border-[#f59e0b]"
                 />
               </div>

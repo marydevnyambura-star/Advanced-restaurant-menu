@@ -24,18 +24,26 @@ export const Footer: React.FC<FooterProps> = ({
               Sizzle & Crisp Diner
             </div>
             <p className="text-xs text-[#a0988a] leading-relaxed">
-              Kenya’s premier fast food joint for juicy smash burgers, 24-hr seasoned crispy chicken, peri-peri loaded fries, and authentic Nairobi smochas.
+              Kenya’s premier fast food diner for juicy smash burgers, charcoal nyama choma, family sharing platters, crispy chicken, and artisan ice creams.
             </p>
           </div>
 
           {/* Location & Opening Hours */}
           <div className="space-y-2">
             <div className="text-xs font-bold uppercase tracking-wider text-[#d8d2c4]">
-              Hours of Service
+              Hours & Location
             </div>
             <p className="text-[#a0988a]">Monday – Sunday: 10:00 AM – Midnight</p>
             <p className="text-[#a0988a]">Late Night Drive-Thru & Counter</p>
-            <p className="text-[#736c61]">Westlands Mall & CBD Moi Avenue, Nairobi</p>
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Moi+Avenue+Westlands+Nairobi+Kenya"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#f59e0b] hover:underline flex items-center gap-1 block"
+              title="Open directions in Google Maps"
+            >
+              Westlands & Moi Ave, Nairobi ↗
+            </a>
           </div>
 
           {/* Contact & Orders */}

@@ -283,17 +283,19 @@ export const ManagerModal: React.FC<ManagerModalProps> = ({
                     onChange={(e) => setNewDishCategory(e.target.value as Dish['category'])}
                     className="w-full bg-[#181c25] border border-[#2b3343] rounded-lg px-3 py-2 text-xs text-[#f8f5ee] focus:border-[#f59e0b] focus:outline-none"
                   >
+                    <option value="african">African Cuisine 🇰🇪</option>
+                    <option value="platters">Food Platters & Combos</option>
+                    <option value="desserts">Ice Cream & Desserts</option>
                     <option value="burgers">Smash Burgers</option>
                     <option value="chicken">Crispy Fried Chicken</option>
                     <option value="fries">Loaded Fries</option>
                     <option value="street">Street Smocha</option>
                     <option value="combos">Value Combos</option>
-                    <option value="juices">Fresh Juices</option>
+                    <option value="juices">Fresh Juices & Shakes</option>
                     <option value="sodas">Chilled Sodas</option>
                     <option value="mocktails">Mocktails (Zero-Proof)</option>
                     <option value="cocktails">Diner Cocktails</option>
                     <option value="wines">Wines & Sangria</option>
-                    <option value="desserts">Doughnuts & Sweets</option>
                   </select>
                 </div>
 

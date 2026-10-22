@@ -73,31 +73,49 @@ export const DrinksShowcaseSection: React.FC<DrinksShowcaseSectionProps> = ({
             <div
               key={drink.id}
               onClick={() => onOpenDish(drink)}
-              className="bg-[#161a23] border border-[#272d3a] rounded-2xl p-5 hover:border-[#f59e0b]/50 transition-all flex flex-col justify-between group cursor-pointer shadow-sm hover:shadow-xl"
+              className="bg-[#161a23] border border-[#272d3a] rounded-2xl overflow-hidden hover:border-[#f59e0b]/50 transition-all flex flex-col justify-between group cursor-pointer shadow-sm hover:shadow-xl"
             >
-              <div>
-                <div className="flex items-center justify-between text-xs text-[#8e8779] mb-2.5">
-                  <span className="uppercase tracking-wider font-semibold text-[#f59e0b] text-[11px]">
-                    {drink.category}
-                  </span>
+              {drink.image && (
+                <div className="relative aspect-[16/9] w-full bg-[#1b202a] overflow-hidden">
+                  <img
+                    src={drink.image}
+                    alt={drink.name}
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                  {drink.featuredNote && (
+                    <div className="absolute top-2.5 left-2.5 bg-[#0f1217]/90 backdrop-blur-sm text-[#fcd34d] text-[10px] font-bold px-2 py-0.5 rounded border border-[#f59e0b]/30">
+                      {drink.featuredNote}
+                    </div>
+                  )}
                   {drink.alcoholByVolume && (
-                    <span className="font-mono text-[10px] text-[#c4bdaf] bg-[#101319] px-2 py-0.5 rounded border border-[#2a303e]">
+                    <div className="absolute top-2.5 right-2.5 bg-[#0f1217]/85 backdrop-blur-sm text-[#c4bdaf] text-[10px] font-mono px-2 py-0.5 rounded border border-[#2a303e]">
                       {drink.alcoholByVolume}
-                    </span>
+                    </div>
                   )}
                 </div>
+              )}
 
-                <h3 className="text-base font-serif font-bold text-[#f8f5ee] group-hover:text-[#f59e0b] transition-colors leading-snug">
-                  {drink.name}
-                </h3>
-                {drink.subtitle && (
-                  <p className="text-xs text-[#a0988a] mt-0.5 mb-2.5 line-clamp-1">{drink.subtitle}</p>
-                )}
+              <div className="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between text-xs text-[#8e8779] mb-2">
+                    <span className="uppercase tracking-wider font-semibold text-[#f59e0b] text-[11px]">
+                      {drink.category}
+                    </span>
+                    <span>{drink.prepTime}</span>
+                  </div>
 
-                <p className="text-xs text-[#aba395] line-clamp-2 leading-relaxed mb-4">
-                  {drink.description}
-                </p>
-              </div>
+                  <h3 className="text-base font-serif font-bold text-[#f8f5ee] group-hover:text-[#f59e0b] transition-colors leading-snug">
+                    {drink.name}
+                  </h3>
+                  {drink.subtitle && (
+                    <p className="text-xs text-[#a0988a] mt-0.5 mb-2 line-clamp-1">{drink.subtitle}</p>
+                  )}
+
+                  <p className="text-xs text-[#aba395] line-clamp-2 leading-relaxed mb-4">
+                    {drink.description}
+                  </p>
+                </div>
 
               <div className="pt-3 border-t border-[#232936] flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-baseline gap-1">
@@ -126,7 +144,8 @@ export const DrinksShowcaseSection: React.FC<DrinksShowcaseSectionProps> = ({
                 </div>
               </div>
             </div>
-          ))}
+          </div>
+        ))}
         </div>
       </div>
     </section>
